@@ -1,4 +1,4 @@
-package org.schedx.adapter;
+package org.schedx.config;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,15 +12,16 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 /**
- * <p>  </p>
+ * <p>{@link ScheduledTaskRegistrar}基本增强实现</p>
  * <p>创建于 2025-05-03 22:46 22:46 </p>
  *
  * @author <a href="mailto:fgwang.660@gmail.com">witt</a>
  * @version v1.0
+ * @see ScheduledTaskRegistrar
  * @since 0.0.1
  */
 @Slf4j
-public class SchedXScheduledTaskRegistrar extends ScheduledTaskRegistrar {
+public class SchedXTaskRegistrar extends ScheduledTaskRegistrar {
 
 
     @Setter(AccessLevel.MODULE)
@@ -42,11 +43,10 @@ public class SchedXScheduledTaskRegistrar extends ScheduledTaskRegistrar {
     @Override
     protected void scheduleTasks() {
         if (!this.applicationReady) {
-            log.trace("SpringJobTaskRegistrar is not ready.");
+            log.trace("SchedXTaskRegistrar is not ready.");
             return;
         }
         super.scheduleTasks();
-        // this.applicationEventPublisher.publishEvent(new SpringJobClientEvent(this.springApplicationName, SpringJobClientState.ONLINE));
     }
 
 
@@ -56,7 +56,6 @@ public class SchedXScheduledTaskRegistrar extends ScheduledTaskRegistrar {
 
     @Override
     public void destroy() {
-        // this.applicationEventPublisher.publishEvent(new SpringJobClientEvent(this.springApplicationName, SpringJobClientState.OFFLINE));
         super.destroy();
     }
 
@@ -64,16 +63,16 @@ public class SchedXScheduledTaskRegistrar extends ScheduledTaskRegistrar {
      * 设置任务锁
      *
      * @param taskLocker 任务锁实现
-     * @return {@link SchedXScheduledTaskRegistrar }
+     * @return {@link SchedXTaskRegistrar }
      */
-    public SchedXScheduledTaskRegistrar setTaskLocker(SchedXTaskLocker taskLocker) {
+    public SchedXTaskRegistrar setTaskLocker(SchedXTaskLocker taskLocker) {
         if (null != taskLocker) {
             this.taskLocker = taskLocker;
         }
         return this;
     }
 
-    public SchedXScheduledTaskRegistrar addListener(SchedXListener listener) {
+    public SchedXTaskRegistrar addListener(SchedXListener listener) {
         this.listener.addListener(listener);
         return this;
     }

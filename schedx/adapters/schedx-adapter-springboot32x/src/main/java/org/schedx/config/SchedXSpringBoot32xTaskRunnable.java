@@ -1,4 +1,4 @@
-package org.schedx.adapter;
+package org.schedx.config;
 
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;

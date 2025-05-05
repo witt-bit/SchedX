@@ -1,4 +1,4 @@
-package org.schedx.adapter;
+package org.schedx.config;
 
 import org.springframework.aop.support.AopUtils;
 import org.springframework.boot.ApplicationArguments;
@@ -11,24 +11,21 @@ import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProc
 import java.lang.reflect.Method;
 
 /**
- * <p>
- * {@link ScheduledAnnotationBeanPostProcessor}
- * 扩展增强/p>
+ * <p> {@link ScheduledAnnotationBeanPostProcessor}扩展增强</p>
  * <p>创建于 2025-04-27 20:41 20:41 </p>
  *
  * @author <a href="mailto:fgwang.660@gmail.com">witt</a>
- * @date 2025/05/03
  */
 public class SchedXAnnotationBeanPostProcessor extends ScheduledAnnotationBeanPostProcessor
         implements ApplicationEventPublisherAware, ApplicationRunner {
 
-    protected final SchedXScheduledTaskRegistrar registrar;
+    protected final SchedXTaskRegistrar registrar;
 
     public SchedXAnnotationBeanPostProcessor() {
-        this(new SchedXScheduledTaskRegistrar());
+        this(new SchedXTaskRegistrar());
     }
 
-    public SchedXAnnotationBeanPostProcessor(SchedXScheduledTaskRegistrar registrar) {
+    public SchedXAnnotationBeanPostProcessor(SchedXTaskRegistrar registrar) {
         super(registrar);
         this.registrar = registrar;
     }

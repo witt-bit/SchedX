@@ -1,4 +1,4 @@
-package org.schedx.adapter;
+package org.schedx.config;
 
 import org.springframework.aop.support.AopUtils;
 import org.springframework.lang.Nullable;
@@ -18,7 +18,7 @@ public class SchedXSpringBoot32xAnnotationBeanPostProcessor extends SchedXAnnota
 
 
     public SchedXSpringBoot32xAnnotationBeanPostProcessor() {
-        super(new SchedXSpringBoot32xScheduledTaskRegistrar());
+        super(new SchedXSpringBoot32XTaskRegistrar());
     }
 
     @Override

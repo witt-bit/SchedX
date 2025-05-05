@@ -10,17 +10,17 @@ import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProc
 import org.springframework.scheduling.config.TaskManagementConfigUtils;
 
 /**
- * <p>  </p>
+ * <p>{@code schedx}自动配置</p>
  * <p>创建于 2025-04-27 20:59 20:59 </p>
  *
  * @author <a href="mailto:fgwang.660@gmail.com">witt</a>
  * @version v1.0
- * @since
+ * @since 0.0.1
  */
 @AutoConfigureBefore(ScheduledAnnotationBeanPostProcessor.class)
 @AutoConfiguration
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-public class SpringJobActuatorAutoConfiguration {
+public class SchedXAutoConfiguration {
 
     @Bean(name = TaskManagementConfigUtils.SCHEDULED_ANNOTATION_PROCESSOR_BEAN_NAME)
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)

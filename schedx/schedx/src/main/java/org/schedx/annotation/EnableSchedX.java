@@ -1,7 +1,7 @@
 package org.schedx.annotation;
 
 import org.springframework.context.annotation.Import;
-import org.schedx.config.SpringJobActuatorAutoConfiguration;
+import org.schedx.config.SchedXAutoConfiguration;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import(SpringJobActuatorAutoConfiguration.class)
+@Import(SchedXAutoConfiguration.class)
 @Documented
 public @interface EnableSchedX {
 }

@@ -1,4 +1,4 @@
-package org.schedx.adapter;
+package org.schedx.config;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,1 +1,1 @@
-org.schedx.config.SpringJobActuatorAutoConfiguration
+org.schedx.config.SchedXAutoConfiguration
