@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.schedx.listen.SchedX2ApplicationEventBridgeListener;
 import org.schedx.listen.SchedXListener;
 import org.schedx.listen.SchedXListenerProxy;
 import org.schedx.lock.NoOpTaskLocker;
@@ -39,6 +40,12 @@ public class SchedXTaskRegistrar extends ScheduledTaskRegistrar {
     @Getter
     private volatile boolean applicationReady = false;
 
+    @Getter
+    private final SchedXProperties schedXProperties;
+
+    public SchedXTaskRegistrar(SchedXProperties schedXProperties) {
+        this.schedXProperties = schedXProperties;
+    }
 
     @Override
     protected void scheduleTasks() {
@@ -55,7 +62,16 @@ public class SchedXTaskRegistrar extends ScheduledTaskRegistrar {
     }
 
     @Override
+    public void afterPropertiesSet() {
+        if (this.schedXProperties.isBridgeApplicationEvent()) {
+            this.addListener(new SchedX2ApplicationEventBridgeListener(this.applicationEventPublisher));
+        }
+        super.afterPropertiesSet();
+    }
+
+    @Override
     public void destroy() {
+        log.info("SchedX shutdown.");
         super.destroy();
     }
 

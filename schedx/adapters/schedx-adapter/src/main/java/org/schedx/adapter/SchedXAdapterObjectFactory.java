@@ -1,10 +1,11 @@
 package org.schedx.adapter;
 
 import org.schedx.config.SchedXAnnotationBeanPostProcessor;
-import org.schedx.config.SchedXTaskRegistrar;
-import org.schedx.config.SchedXSpringBoot32xAnnotationBeanPostProcessor;
+import org.schedx.config.SchedXProperties;
 import org.schedx.config.SchedXSpringBoot32XTaskRegistrar;
+import org.schedx.config.SchedXSpringBoot32xAnnotationBeanPostProcessor;
 import org.schedx.config.SchedXSpringBoot32xTaskRunnable;
+import org.schedx.config.SchedXTaskRegistrar;
 import org.schedx.config.SchedXTaskRunnable;
 import org.schedx.util.SemanticVersion;
 import org.springframework.boot.SpringBootVersion;
@@ -14,7 +15,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import java.lang.reflect.Method;
 
 /**
- * <p>  </p>
+ * <p>SchedX核心对象工厂，主要解决跨Spring版本兼容性问题</p></p>
  * <p>创建于 2025-05-03 21:03 21:03 </p>
  *
  * @author <a href="mailto:fgwang.660@gmail.com">witt</a>
@@ -28,13 +29,13 @@ public final class SchedXAdapterObjectFactory {
      *
      * @return {@link SchedXAnnotationBeanPostProcessor }
      */
-    public static SchedXAnnotationBeanPostProcessor createAnnotationBeanPostProcessor() {
+    public static SchedXAnnotationBeanPostProcessor createAnnotationBeanPostProcessor(SchedXProperties properties) {
         final String springBootVersion = SpringBootVersion.getVersion();
         if (SemanticVersion.parse(springBootVersion).isLessThanOrEqual("3.2.0")) {
-            return new SchedXSpringBoot32xAnnotationBeanPostProcessor();
+            return new SchedXSpringBoot32xAnnotationBeanPostProcessor(properties);
         }
 
-        return new SchedXAnnotationBeanPostProcessor();
+        return new SchedXAnnotationBeanPostProcessor(properties);
     }
 
     /**
@@ -42,13 +43,13 @@ public final class SchedXAdapterObjectFactory {
      *
      * @return {@link SchedXTaskRegistrar }
      */
-    public static SchedXTaskRegistrar createTaskRegistrar() {
+    public static SchedXTaskRegistrar createTaskRegistrar(SchedXProperties properties) {
         final String springBootVersion = SpringBootVersion.getVersion();
         if (SemanticVersion.parse(springBootVersion).isLessThanOrEqual("3.2.0")) {
-            return new SchedXSpringBoot32XTaskRegistrar();
+            return new SchedXSpringBoot32XTaskRegistrar(properties);
         }
 
-        return new SchedXTaskRegistrar();
+        return new SchedXTaskRegistrar(properties);
     }
 
     /**

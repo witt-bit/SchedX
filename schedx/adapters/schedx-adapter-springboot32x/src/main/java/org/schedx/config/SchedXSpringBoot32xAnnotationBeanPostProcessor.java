@@ -17,8 +17,8 @@ import java.lang.reflect.Method;
 public class SchedXSpringBoot32xAnnotationBeanPostProcessor extends SchedXAnnotationBeanPostProcessor {
 
 
-    public SchedXSpringBoot32xAnnotationBeanPostProcessor() {
-        super(new SchedXSpringBoot32XTaskRegistrar());
+    public SchedXSpringBoot32xAnnotationBeanPostProcessor(SchedXProperties schedXProperties) {
+        super(new SchedXSpringBoot32XTaskRegistrar(schedXProperties));
     }
 
     @Override

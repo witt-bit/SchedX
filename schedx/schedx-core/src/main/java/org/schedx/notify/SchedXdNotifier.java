@@ -1,7 +1,7 @@
 package org.schedx.notify;
 
 /**
- * <p>{@link org.schedx.persistence.SchedXJob}和{@link org.schedx.persistence.SchedXTask}变更通知接口，从持久层-->{@code schedX}</p>
+ * <p>{@link org.schedx.persistence.SchedXJob}和{@link org.schedx.persistence.SchedXTask}变更通知接口，从持久层->{@code schedX}</p>
  * <p>创建于 2025-05-05 14:59 14:59 </p>
  *
  * @author <a href="mailto:fgwang.660@gmail.com">witt</a>
@@ -10,7 +10,6 @@ package org.schedx.notify;
  */
 @SuppressWarnings("unused")
 public interface SchedXdNotifier {
-
 
     // ------------------------------------- task  -------------------------------------
 

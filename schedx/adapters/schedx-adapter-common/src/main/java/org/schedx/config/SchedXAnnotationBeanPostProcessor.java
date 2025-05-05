@@ -21,13 +21,16 @@ public class SchedXAnnotationBeanPostProcessor extends ScheduledAnnotationBeanPo
 
     protected final SchedXTaskRegistrar registrar;
 
-    public SchedXAnnotationBeanPostProcessor() {
-        this(new SchedXTaskRegistrar());
+    protected final SchedXProperties properties;
+
+    public SchedXAnnotationBeanPostProcessor(SchedXProperties properties) {
+        this(new SchedXTaskRegistrar(properties));
     }
 
     public SchedXAnnotationBeanPostProcessor(SchedXTaskRegistrar registrar) {
         super(registrar);
         this.registrar = registrar;
+        this.properties = registrar.getSchedXProperties();
     }
 
     @Override
@@ -38,6 +41,11 @@ public class SchedXAnnotationBeanPostProcessor extends ScheduledAnnotationBeanPo
         return runnable;
     }
 
+    /**
+     * 创建{@link SchedXTaskRunnable}
+     *
+     * @param runnable 实例
+     */
     protected void afterCreateRunnable(SchedXTaskRunnable runnable) {
         runnable.setTaskLocker(this.registrar.getTaskLocker());
         runnable.setListener(this.registrar.getListener());
@@ -45,9 +53,7 @@ public class SchedXAnnotationBeanPostProcessor extends ScheduledAnnotationBeanPo
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        logger.info("spring job actuator ready .");
-        // super.onApplicationEvent(this.event);
-        // this.event = null;
+        logger.info("SchedX ready .");
         this.registrar.applicationReady();
         this.registrar.scheduleTasks();
     }
