@@ -47,7 +47,7 @@ public class SchedXSpringBoot32xTaskRunnable extends SchedXTaskRunnable implemen
 
     @Override
     protected Object invoke() {
-        ScheduledTaskObservationContext context = new ScheduledTaskObservationContext(this.target, this.method);
+        ScheduledTaskObservationContext context = new ScheduledTaskObservationContext(this.getTarget(), this.getMethod());
         Observation observation = ScheduledTaskObservationDocumentation.TASKS_SCHEDULED_EXECUTION.observation(
                 null, DEFAULT_CONVENTION,
                 () -> context, this.observationRegistrySupplier.get());

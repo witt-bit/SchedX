@@ -25,6 +25,11 @@ public class SchedX2ApplicationEventBridgeListener implements SchedXListener {
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
+    public int priority() {
+        return Integer.MIN_VALUE;
+    }
+
+    @Override
     public void onGroupEvent(SchedXGroupEvent event) {
         this.eventPublisher.publishEvent(event);
     }

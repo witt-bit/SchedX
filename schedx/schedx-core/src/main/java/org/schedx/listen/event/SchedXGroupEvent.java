@@ -2,6 +2,9 @@ package org.schedx.listen.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.schedx.persistence.SchedXGroup;
 
 import java.io.Serializable;
 
@@ -13,7 +16,9 @@ import java.io.Serializable;
  * @version v1.0
  * @since 0.0.1
  */
+@Setter
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class SchedXGroupEvent implements Serializable {
 
@@ -39,5 +44,12 @@ public class SchedXGroupEvent implements Serializable {
      */
     private final long time = System.nanoTime();
 
+    public static SchedXGroupEvent fromGroup(SchedXGroup instance) {
+        SchedXGroupEvent event = new SchedXGroupEvent();
+        event.setId(instance.getId());
+        event.setIp(instance.getIp());
+        event.setState(instance.getState());
+        return event;
+    }
 
 }

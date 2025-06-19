@@ -18,7 +18,7 @@ import java.lang.reflect.Method;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SchedXJob implements Serializable {
+public class SchedXJob extends SchedXTaskTrigger<SchedXJob> implements Serializable {
     private static final long serialVersionUID = 4438786643997972665L;
 
     /**

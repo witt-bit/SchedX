@@ -16,6 +16,11 @@ public enum SchedXState {
     STARTING,
 
     /**
+     * 关闭中
+     */
+    STOPPING,
+
+    /**
      * 离线
      */
     OFFLINE,

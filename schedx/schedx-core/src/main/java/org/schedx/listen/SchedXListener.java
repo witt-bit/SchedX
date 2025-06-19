@@ -19,9 +19,7 @@ public interface SchedXListener extends Comparable<SchedXListener> {
      *
      * @return int
      */
-    default int priority() {
-        return 0;
-    }
+    int priority();
 
     @Override
     default int compareTo(SchedXListener o) {
@@ -43,7 +41,7 @@ public interface SchedXListener extends Comparable<SchedXListener> {
     void onJobEvent(SchedXJobEvent event);
 
     /**
-     * Task  事件
+     * Task事件
      *
      * @param event 事件
      */

@@ -10,8 +10,6 @@ import org.schedx.parser.MethodArgument;
 import org.schedx.parser.MethodArgumentParser;
 import org.schedx.parser.MethodArgumentParserRegistry;
 import org.schedx.util.IdUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.scheduling.support.ScheduledMethodRunnable;
 import org.springframework.util.ReflectionUtils;
@@ -35,9 +33,9 @@ import java.util.List;
  * @since 0.0.1
  */
 @Getter
-public class SchedXTaskRunnable implements Runnable {
+public class SchedXTaskRunnable extends ScheduledMethodRunnable implements Runnable {
 
-    protected static final Logger log = LoggerFactory.getLogger("SchedXTaskRunnable");
+    // protected static final Logger log = LoggerFactory.getLogger("SchedXTaskRunnable");
 
     /**
      * jobId
@@ -55,15 +53,15 @@ public class SchedXTaskRunnable implements Runnable {
      */
     protected volatile SchedXTaskState state;
 
-    /**
-     * 调度目标类
-     */
-    protected final Object target;
-
-    /**
-     * 调度方法
-     */
-    protected final Method method;
+    // /**
+    //  * 调度目标类
+    //  */
+    // protected final Object target;
+    //
+    // /**
+    //  * 调度方法
+    //  */
+    // protected final Method method;
 
     /**
      * 默认的调用参数
@@ -83,8 +81,7 @@ public class SchedXTaskRunnable implements Runnable {
     protected SchedXListener listener;
 
     public SchedXTaskRunnable(String taskId, Object target, Method method) {
-        this.target = target;
-        this.method = method;
+        super(target, method);
         this.state = SchedXTaskState.READY;
     }
 
@@ -94,24 +91,23 @@ public class SchedXTaskRunnable implements Runnable {
             return;
         }
 
-        final SchedXTaskEvent event = new SchedXTaskEvent(this.jobId, this.id);
+        SchedXTaskEvent event = SchedXTaskEvent.fromTask(this.jobId, this.id);
         Object result = null;
         try (AutoCloseable ignore = this.beforeInvoke()) {
             this.state = SchedXTaskState.RUNNING;
-            event.setState(this.state);
-            this.listener.onTaskEvent(event);
+            this.listener.onTaskEvent(event.withState(this.state));
             result = this.invoke();
             this.afterInvoke();
             if (this.state == SchedXTaskState.RUNNING) {
                 this.state = SchedXTaskState.SUCCESS;
-                event.setState(this.state);
+                event = event.withState(this.state);
                 event.setResult(result);
                 this.listener.onTaskEvent(event);
             }
         } catch (Throwable e) {
             if (this.state == SchedXTaskState.RUNNING) {
                 this.state = SchedXTaskState.FAILURE;
-                event.setState(this.state);
+                event = event.withState(this.state);
                 event.setResult(result);
                 this.listener.onTaskEvent(event);
             }
@@ -136,13 +132,14 @@ public class SchedXTaskRunnable implements Runnable {
     }
 
     /**
-     * 反射调用{@link #method}
+     * 反射调用{@link #getMethod()}
      */
     protected Object invoke() {
         try {
-            ReflectionUtils.makeAccessible(this.method);
+            final Method method = this.getMethod();
+            ReflectionUtils.makeAccessible(method);
             final Object[] args = this.parseArguments();
-            return this.method.invoke(this.target, args);
+            return method.invoke(this.getTarget(), args);
         } catch (InvocationTargetException ex) {
             ReflectionUtils.rethrowRuntimeException(ex.getTargetException());
         } catch (IllegalAccessException ex) {
@@ -175,12 +172,13 @@ public class SchedXTaskRunnable implements Runnable {
         if (this.params == null) {
             return null;
         }
-        final Type[] parameterTypes = this.method.getGenericParameterTypes();
+        final Method method = this.getMethod();
+        final Type[] parameterTypes = method.getGenericParameterTypes();
         if (parameterTypes.length == 0) {
             return null;
         }
 
-        final Parameter[] parameters = this.method.getParameters();
+        final Parameter[] parameters = method.getParameters();
         final Object[] args = new Object[parameterTypes.length];
         boolean allNullValue = true;
         for (int i = 0; i < parameterTypes.length; i++) {
@@ -199,6 +197,19 @@ public class SchedXTaskRunnable implements Runnable {
         }
 
         return allNullValue ? null : args;
+    }
+
+    /**
+     * 派生{@link Runnable}, 同一Job的多个Task，除id不同，其他参数相同
+     *
+     * @param taskId 任务ID
+     * @return {@link SchedXTaskRunnable }
+     * @see SchedXAnnotationBeanPostProcessor#createRunnable(Object, Method)
+     * @see ScheduledMethodRunnable
+     * @see org.springframework.scheduling.SchedulingAwareRunnable
+     */
+    public SchedXTaskRunnable fork(String taskId) {
+        return new SchedXTaskRunnable(taskId, this.getTarget(), this.getMethod());
     }
 
     /**

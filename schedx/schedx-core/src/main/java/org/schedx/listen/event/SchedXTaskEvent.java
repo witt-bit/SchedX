@@ -1,9 +1,18 @@
 package org.schedx.listen.event;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.With;
 import lombok.experimental.Accessors;
+import org.schedx.util.CollectionUtil;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>{@link Runnable}Task事件</p>
@@ -17,21 +26,19 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @NoArgsConstructor
-public class SchedXTaskEvent {
+@AllArgsConstructor
+public class SchedXTaskEvent implements Serializable {
 
+    private static final long serialVersionUID = 8396891743032706173L;
     /**
-     * 调度Job
+     * 调度任务，job->task映射，一对多
      */
-    private String jobId;
-
-    /**
-     * 调度任务主键
-     */
-    private String taskId;
+    private Map<String, Set<String>> tasks;
 
     /**
      * 任务状态
      */
+    @With
     private SchedXTaskState state;
 
     /**
@@ -49,8 +56,30 @@ public class SchedXTaskEvent {
      */
     private final long time = System.nanoTime();
 
-    public SchedXTaskEvent(String jobId, String taskId) {
-        this.jobId = jobId;
-        this.taskId = taskId;
+    /**
+     * 从单个job中创建{@link SchedXTaskEvent}
+     *
+     * @param jobId   工作ID
+     * @param taskIds 任务ID
+     * @return {@link SchedXTaskEvent }
+     */
+    public static SchedXTaskEvent fromJob(String jobId, Collection<String> taskIds) {
+        final SchedXTaskEvent event = new SchedXTaskEvent();
+        final Map<String, Set<String>> tasks = Collections.singletonMap(jobId, Collections.unmodifiableSet(CollectionUtil.toSet(taskIds)));
+        event.setTasks(tasks);
+        return event;
     }
+
+    /**
+     * 从单个任务创建{@link SchedXTaskEvent}，注意{@link #tasks}的{@link Map#values()}是不可变的
+     *
+     * @param jobId  工作ID
+     * @param taskId 任务ID
+     * @return {@link SchedXTaskEvent }
+     */
+    public static SchedXTaskEvent fromTask(String jobId, String taskId) {
+        return fromJob(jobId, Collections.singleton(taskId));
+    }
+
+
 }

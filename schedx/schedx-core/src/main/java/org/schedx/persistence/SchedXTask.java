@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Setter
 @Getter
 @NoArgsConstructor
-public class SchedXTask implements Serializable {
+public class SchedXTask extends SchedXTaskTrigger<SchedXTask> implements Serializable {
 
     private static final long serialVersionUID = 819501366536679742L;
 

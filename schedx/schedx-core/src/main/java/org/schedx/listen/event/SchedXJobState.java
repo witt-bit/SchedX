@@ -11,8 +11,14 @@ package org.schedx.listen.event;
 public enum SchedXJobState {
 
 
+    /**
+     * 正在停止调度
+     */
+    STOPPING,
 
-    ;
-
+    /**
+     * 离线
+     */
+    OFFLINE;
 
 }

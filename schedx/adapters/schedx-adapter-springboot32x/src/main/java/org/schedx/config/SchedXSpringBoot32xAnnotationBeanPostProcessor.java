@@ -3,8 +3,12 @@ package org.schedx.config;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
+import org.springframework.scheduling.config.OneTimeTask;
+import org.springframework.scheduling.config.ScheduledTask;
 
 import java.lang.reflect.Method;
+import java.time.Duration;
+import java.util.Set;
 
 /**
  * <p>{@link ScheduledAnnotationBeanPostProcessor}扩展增强/p>
@@ -22,6 +26,7 @@ public class SchedXSpringBoot32xAnnotationBeanPostProcessor extends SchedXAnnota
     }
 
     @Override
+    @SuppressWarnings("NullableProblems")
     protected Runnable createRunnable(Object target, Method method, @Nullable String qualifier) {
         Method invocableMethod = AopUtils.selectInvocableMethod(method, target.getClass());
         final SchedXSpringBoot32xTaskRunnable runnable = new SchedXSpringBoot32xTaskRunnable(null, target, invocableMethod);
@@ -29,5 +34,31 @@ public class SchedXSpringBoot32xAnnotationBeanPostProcessor extends SchedXAnnota
         runnable.setObservationRegistrySupplier(this.registrar::getObservationRegistry);
         super.afterCreateRunnable(runnable);
         return runnable;
+    }
+
+    // @Override
+    // protected Set<ScheduledTask> parseScheduledTasks(SchedXScheduledAnnotationContext context) {
+    //     final Set<ScheduledTask> tasks = super.parseScheduledTasks(context);
+    //     // 兜底： 至少运行一次
+    //     if (tasks.isEmpty()) {
+    //         this.addParsedTask(tasks, () -> this.parseOneTimeTask(context));
+    //     }
+    //     return tasks;
+    // }
+
+    protected ScheduledTask parseOneTimeTask(SchedXScheduledAnnotationContext context) {
+        final Duration delayToUse = context.getInitialDelay().orElseIfNull(Duration.ZERO);
+        return this.newOneTimeTask(context.getRunnable(), delayToUse);
+    }
+
+    /**
+     * 创建{@link org.springframework.scheduling.config.OneTimeTask}的{@link ScheduledTask}
+     *
+     * @param runnable   可运行
+     * @param delayToUse 使用延迟
+     * @return {@link ScheduledTask }
+     */
+    protected ScheduledTask newOneTimeTask(Runnable runnable, Duration delayToUse) {
+        return this.registrar.scheduleOneTimeTask(new OneTimeTask(runnable, delayToUse));
     }
 }

@@ -32,10 +32,10 @@ public final class SchedXAdapterObjectFactory {
     public static SchedXAnnotationBeanPostProcessor createAnnotationBeanPostProcessor(SchedXProperties properties) {
         final String springBootVersion = SpringBootVersion.getVersion();
         if (SemanticVersion.parse(springBootVersion).isLessThanOrEqual("3.2.0")) {
-            return new SchedXSpringBoot32xAnnotationBeanPostProcessor(properties);
+            return new SchedXAnnotationBeanPostProcessor(properties);
         }
 
-        return new SchedXAnnotationBeanPostProcessor(properties);
+        return new SchedXSpringBoot32xAnnotationBeanPostProcessor(properties);
     }
 
     /**
@@ -46,10 +46,10 @@ public final class SchedXAdapterObjectFactory {
     public static SchedXTaskRegistrar createTaskRegistrar(SchedXProperties properties) {
         final String springBootVersion = SpringBootVersion.getVersion();
         if (SemanticVersion.parse(springBootVersion).isLessThanOrEqual("3.2.0")) {
-            return new SchedXSpringBoot32XTaskRegistrar(properties);
+            return new SchedXTaskRegistrar(properties);
         }
 
-        return new SchedXTaskRegistrar(properties);
+        return new SchedXSpringBoot32XTaskRegistrar(properties);
     }
 
     /**
@@ -60,9 +60,9 @@ public final class SchedXAdapterObjectFactory {
     public static SchedXTaskRunnable createTaskRegistrar(String taskId, Object target, Method method) {
         final String springBootVersion = SpringBootVersion.getVersion();
         if (SemanticVersion.parse(springBootVersion).isLessThanOrEqual("3.2.0")) {
-            return new SchedXSpringBoot32xTaskRunnable(taskId, target, method);
+            return new SchedXTaskRunnable(taskId, target, method);
         }
 
-        return new SchedXTaskRunnable(taskId, target, method);
+        return new SchedXSpringBoot32xTaskRunnable(taskId, target, method);
     }
 }
